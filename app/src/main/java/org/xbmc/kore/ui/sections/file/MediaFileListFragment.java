@@ -323,7 +323,7 @@ public class MediaFileListFragment extends AbstractListFragment {
 
         Files.GetDirectory action = new Files.GetDirectory(dir.file,
                 mediaType,
-                new ListType.Sort(ListType.Sort.SORT_METHOD_PATH, true, true),
+                new ListType.Sort(ListType.Sort.SORT_METHOD_PATH, true, false),
                 properties);
         action.execute(hostManager.getConnection(), new ApiCallback<List<ListType.ItemFile>>() {
             @Override
