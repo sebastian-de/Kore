@@ -346,6 +346,7 @@
     <string name="pref_keep_screen_on">Stay awake</string>
     <string name="show_notification">Show notification while playing</string>
     <string name="pause_during_calls">Pause during phone call</string>
+    <string name="show_all_files">Show all files in filemode</string>
     <string name="use_hardware_volume_keys">Use device volume keys</string>
     <string name="vibrate_on_remote">Vibrate on touch</string>
     <string name="remote_bar_items">Bottom bar shortcuts</string>

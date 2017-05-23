@@ -397,5 +397,6 @@
     <string name="by_artist">Nach Künstler</string>
     <string name="by_artist_and_year">Nach Künstler und Jahr</string>
     <string name="muted">stumm geschalten</string>
+    <string name="show_all_files">Im Datei-Browser alle Dateien anzeigen</string>
 
 </resources>

@@ -21,6 +21,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -34,6 +35,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.xbmc.kore.R;
+import org.xbmc.kore.Settings;
 import org.xbmc.kore.host.HostManager;
 import org.xbmc.kore.jsonrpc.ApiCallback;
 import org.xbmc.kore.jsonrpc.HostConnection;
@@ -321,8 +323,19 @@ public class MediaFileListFragment extends AbstractListFragment {
                 ListType.FieldsFiles.SIZE, ListType.FieldsFiles.LASTMODIFIED, ListType.FieldsFiles.MIMETYPE
         };
 
+        //Check if all files should be displayed
+        boolean showAllFiles = PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getBoolean(Settings.KEY_PREF_FILES_SHOW_ALL,
+                        Settings.DEFAULT_PREF_FILES_SHOW_ALL);
+
+        String filesToShow = mediaType;
+        if (showAllFiles) {
+            filesToShow = Files.Media.FILES;
+        }
+
         Files.GetDirectory action = new Files.GetDirectory(dir.file,
-                mediaType,
+                filesToShow,
                 new ListType.Sort(ListType.Sort.SORT_METHOD_PATH, true, false),
                 properties);
         action.execute(hostManager.getConnection(), new ApiCallback<List<ListType.ItemFile>>() {

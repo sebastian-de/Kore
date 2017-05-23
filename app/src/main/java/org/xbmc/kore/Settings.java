@@ -116,6 +116,10 @@ public class Settings {
     public static final String KEY_PREF_TVSHOWS_IGNORE_PREFIXES = "tvshows_ignore_prefixes";
     public static final boolean DEFAULT_PREF_TVSHOWS_IGNORE_PREFIXES = false;
 
+    // Show all files in filemode
+    public static final String KEY_PREF_FILES_SHOW_ALL = "pref_show_all_files";
+    public static final boolean DEFAULT_PREF_FILES_SHOW_ALL = false;
+
     // Use hardware volume keys to control volume
     public static final String KEY_PREF_USE_HARDWARE_VOLUME_KEYS = "pref_use_hardware_volume_keys";
     public static final boolean DEFAULT_PREF_USE_HARDWARE_VOLUME_KEYS = true;
