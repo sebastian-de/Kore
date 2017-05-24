@@ -49,7 +49,9 @@ public class Settings {
             SORT_BY_ALBUM = 5,
             SORT_BY_ARTIST = 6,
             SORT_BY_ARTIST_YEAR = 7,
-            SORT_BY_LAST_PLAYED = 8;
+            SORT_BY_LAST_PLAYED = 8,
+            SORT_BY_PATH = 9,
+            SORT_BY_LABEL = 10;
 
     /**
      * Preferences keys.
@@ -111,6 +113,18 @@ public class Settings {
     // Sort order on tv shows
     public static final String KEY_PREF_TVSHOWS_SORT_ORDER = "tvshows_sort_order";
     public static final int DEFAULT_PREF_TVSHOWS_SORT_ORDER = SORT_BY_NAME;
+
+    // Default to only show files of the browsed mediatype
+    public static final String KEY_PREF_FILES_SHOW_ALL = "show_all_files";
+    public static final boolean DEFAULT_PREF_FILES_SHOW_ALL = false;
+
+    // Ignore articles on file sorting
+    public static final String KEY_PREF_FILES_IGNORE_PREFIXES = "files_ignore_prefixes";
+    public static final boolean DEFAULT_PREF_FILES_IGNORE_PREFIXES = false;
+
+    // Sort order on files
+    public static final String KEY_PREF_FILES_SORT_ORDER = "files_sort_order";
+    public static final int DEFAULT_PREF_FILES_SORT_ORDER = SORT_BY_PATH;
 
     // Ignore articles on tv show sorting
     public static final String KEY_PREF_TVSHOWS_IGNORE_PREFIXES = "tvshows_ignore_prefixes";

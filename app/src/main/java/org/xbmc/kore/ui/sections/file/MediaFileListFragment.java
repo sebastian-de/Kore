@@ -16,13 +16,18 @@
 package org.xbmc.kore.ui.sections.file;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.preference.PreferenceManager;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.support.v4.app.ActivityCompat;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -34,6 +39,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import org.xbmc.kore.R;
+import org.xbmc.kore.Settings;
 import org.xbmc.kore.host.HostManager;
 import org.xbmc.kore.jsonrpc.ApiCallback;
 import org.xbmc.kore.jsonrpc.HostConnection;
@@ -186,6 +192,110 @@ public class MediaFileListFragment extends AbstractListFragment {
         }
     }
 
+    //Sort options have no effect if all files are shown
+    //Hide them if this option is enabled
+    @Override
+    public void onPrepareOptionsMenu (Menu menu) {
+        boolean showAllFilesEnabled = PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getBoolean(Settings.KEY_PREF_FILES_SHOW_ALL,
+                        Settings.DEFAULT_PREF_FILES_SHOW_ALL);
+
+        if (showAllFilesEnabled) {
+            menu.findItem(R.id.action_ignore_prefixes).setEnabled(false);
+            menu.findItem(R.id.action_sort_by_path).setEnabled(false);
+            menu.findItem(R.id.action_sort_by_label).setEnabled(false);
+            menu.findItem(R.id.action_sort_by_date_added).setEnabled(false);
+        }
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        if (!isAdded()) {
+            // HACK: Fix crash reported on Play Store. Why does this is necessary is beyond me
+            super.onCreateOptionsMenu(menu, inflater);
+            return;
+        }
+
+        inflater.inflate(R.menu.file_list, menu);
+
+        // Setup filters
+        MenuItem showAllFiles = menu.findItem(R.id.action_show_all_files),
+                ignoreArticles = menu.findItem(R.id.action_ignore_prefixes),
+                sortByPath = menu.findItem(R.id.action_sort_by_path),
+                sortByLabel = menu.findItem(R.id.action_sort_by_label),
+                sortByDateAdded = menu.findItem(R.id.action_sort_by_date_added);
+
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        showAllFiles.setChecked(preferences.getBoolean(Settings.KEY_PREF_FILES_SHOW_ALL, Settings.DEFAULT_PREF_FILES_SHOW_ALL));
+        ignoreArticles.setChecked(preferences.getBoolean(Settings.KEY_PREF_FILES_IGNORE_PREFIXES, Settings.DEFAULT_PREF_FILES_IGNORE_PREFIXES));
+
+        int sortOrder = preferences.getInt(Settings.KEY_PREF_FILES_SORT_ORDER, Settings.DEFAULT_PREF_FILES_SORT_ORDER);
+        switch (sortOrder) {
+            case Settings.SORT_BY_PATH:
+                sortByPath.setChecked(true);
+                break;
+            case Settings.SORT_BY_LABEL:
+                sortByLabel.setChecked(true);
+                break;
+            case Settings.SORT_BY_DATE_ADDED:
+                sortByDateAdded.setChecked(true);
+                break;
+            default:
+                sortByPath.setChecked(true);
+                break;
+        }
+
+        super.onCreateOptionsMenu(menu, inflater);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
+        switch (item.getItemId()) {
+            case R.id.action_show_all_files:
+                item.setChecked(!item.isChecked());
+                preferences.edit()
+                        .putBoolean(Settings.KEY_PREF_FILES_SHOW_ALL, item.isChecked())
+                        .apply();
+                //Reload menu to hide non working items
+                ActivityCompat.invalidateOptionsMenu(getActivity());
+                //TODO: reload current file list
+                break;
+            case R.id.action_ignore_prefixes:
+                item.setChecked(!item.isChecked());
+                preferences.edit()
+                        .putBoolean(Settings.KEY_PREF_FILES_IGNORE_PREFIXES, item.isChecked())
+                        .apply();
+                //TODO: reload current file list
+                break;
+            case R.id.action_sort_by_path:
+                item.setChecked(true);
+                preferences.edit()
+                        .putInt(Settings.KEY_PREF_FILES_SORT_ORDER, Settings.SORT_BY_PATH)
+                        .apply();
+                //TODO: reload current file list
+                break;
+            case R.id.action_sort_by_label:
+                item.setChecked(true);
+                preferences.edit()
+                        .putInt(Settings.KEY_PREF_FILES_SORT_ORDER, Settings.SORT_BY_LABEL)
+                        .apply();
+                //TODO: reload current file list
+            case R.id.action_sort_by_date_added:
+                item.setChecked(true);
+                preferences.edit()
+                        .putInt(Settings.KEY_PREF_FILES_SORT_ORDER, Settings.SORT_BY_DATE_ADDED)
+                        .apply();
+                //TODO: reload current file list
+                break;
+            default:
+                break;
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
     void handleFileSelect(FileLocation f) {
         // if selection is a directory, browse the the level below
         if (f.isDirectory) {
@@ -321,10 +431,51 @@ public class MediaFileListFragment extends AbstractListFragment {
                 ListType.FieldsFiles.SIZE, ListType.FieldsFiles.LASTMODIFIED, ListType.FieldsFiles.MIMETYPE
         };
 
+        //Check if all files should be displayed
+        boolean showAllFiles = PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getBoolean(Settings.KEY_PREF_FILES_SHOW_ALL,
+                        Settings.DEFAULT_PREF_FILES_SHOW_ALL);
+
+        String filesToShow = mediaType;
+        if (showAllFiles) {
+            filesToShow = Files.Media.FILES;
+        }
+
+        //Check sort order
+        int prefSortOrder = PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getInt(Settings.KEY_PREF_FILES_SORT_ORDER,
+                        Settings.DEFAULT_PREF_FILES_SORT_ORDER);
+
+        String sortOrder= ListType.Sort.SORT_METHOD_PATH;
+
+        //Sort order has no effect if all files are shown
+        if (!showAllFiles) {
+            switch (prefSortOrder) {
+                case Settings.SORT_BY_PATH:
+                    sortOrder = ListType.Sort.SORT_METHOD_PATH;
+                    break;
+                case Settings.SORT_BY_LABEL:
+                    sortOrder = ListType.Sort.SORT_METHOD_LABEL;
+                    break;
+                case Settings.SORT_BY_DATE_ADDED:
+                    sortOrder = ListType.Sort.SORT_METHOD_DATEADDED;
+                    break;
+            }
+        }
+
+        //Check if we should ignore prefixes
+        boolean ignorePrefixes = PreferenceManager
+                .getDefaultSharedPreferences(getActivity())
+                .getBoolean(Settings.KEY_PREF_FILES_IGNORE_PREFIXES,
+                        Settings.DEFAULT_PREF_FILES_IGNORE_PREFIXES);
+
         Files.GetDirectory action = new Files.GetDirectory(dir.file,
-                mediaType,
-                new ListType.Sort(ListType.Sort.SORT_METHOD_PATH, true, true),
+                filesToShow,
+                new ListType.Sort(sortOrder, true, ignorePrefixes),
                 properties);
+
         action.execute(hostManager.getConnection(), new ApiCallback<List<ListType.ItemFile>>() {
             @Override
             public void onSuccess(List<ListType.ItemFile> result) {
