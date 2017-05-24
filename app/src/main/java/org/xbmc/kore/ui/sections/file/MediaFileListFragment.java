@@ -204,7 +204,7 @@ public class MediaFileListFragment extends AbstractListFragment {
         if (showAllFilesEnabled) {
             menu.findItem(R.id.action_ignore_prefixes).setEnabled(false);
             menu.findItem(R.id.action_sort_by_path).setEnabled(false);
-            menu.findItem(R.id.action_sort_by_label).setEnabled(false);
+            menu.findItem(R.id.action_sort_by_name).setEnabled(false);
             menu.findItem(R.id.action_sort_by_date_added).setEnabled(false);
         }
     }
@@ -223,7 +223,7 @@ public class MediaFileListFragment extends AbstractListFragment {
         MenuItem showAllFiles = menu.findItem(R.id.action_show_all_files),
                 ignoreArticles = menu.findItem(R.id.action_ignore_prefixes),
                 sortByPath = menu.findItem(R.id.action_sort_by_path),
-                sortByLabel = menu.findItem(R.id.action_sort_by_label),
+                sortByName = menu.findItem(R.id.action_sort_by_name),
                 sortByDateAdded = menu.findItem(R.id.action_sort_by_date_added);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getActivity());
@@ -235,8 +235,8 @@ public class MediaFileListFragment extends AbstractListFragment {
             case Settings.SORT_BY_PATH:
                 sortByPath.setChecked(true);
                 break;
-            case Settings.SORT_BY_LABEL:
-                sortByLabel.setChecked(true);
+            case Settings.SORT_BY_NAME:
+                sortByName.setChecked(true);
                 break;
             case Settings.SORT_BY_DATE_ADDED:
                 sortByDateAdded.setChecked(true);
@@ -276,12 +276,13 @@ public class MediaFileListFragment extends AbstractListFragment {
                         .apply();
                 //TODO: reload current file list
                 break;
-            case R.id.action_sort_by_label:
+            case R.id.action_sort_by_name:
                 item.setChecked(true);
                 preferences.edit()
-                        .putInt(Settings.KEY_PREF_FILES_SORT_ORDER, Settings.SORT_BY_LABEL)
+                        .putInt(Settings.KEY_PREF_FILES_SORT_ORDER, Settings.SORT_BY_NAME)
                         .apply();
                 //TODO: reload current file list
+                break;
             case R.id.action_sort_by_date_added:
                 item.setChecked(true);
                 preferences.edit()
@@ -456,8 +457,8 @@ public class MediaFileListFragment extends AbstractListFragment {
                 case Settings.SORT_BY_PATH:
                     sortOrder = ListType.Sort.SORT_METHOD_PATH;
                     break;
-                case Settings.SORT_BY_LABEL:
-                    sortOrder = ListType.Sort.SORT_METHOD_LABEL;
+                case Settings.SORT_BY_NAME:
+                    sortOrder = ListType.Sort.SORT_METHOD_TITLE;
                     break;
                 case Settings.SORT_BY_DATE_ADDED:
                     sortOrder = ListType.Sort.SORT_METHOD_DATEADDED;

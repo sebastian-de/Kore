@@ -50,8 +50,7 @@ public class Settings {
             SORT_BY_ARTIST = 6,
             SORT_BY_ARTIST_YEAR = 7,
             SORT_BY_LAST_PLAYED = 8,
-            SORT_BY_PATH = 9,
-            SORT_BY_LABEL = 10;
+            SORT_BY_PATH = 9;
 
     /**
      * Preferences keys.

@@ -331,7 +331,6 @@
     <string name="sort_by_last_played">By last played</string>
     <string name="ignore_prefixes">Ignore prefixes</string>
     <string name="sort_by_path">By path</string>
-    <string name="sort_by_label">By label</string>
     <string name="show_all_files">Show all files</string>
 
     <!-- Preferences strings -->

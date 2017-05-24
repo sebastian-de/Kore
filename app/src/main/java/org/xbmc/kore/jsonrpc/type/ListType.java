@@ -588,7 +588,7 @@ public class ListType {
         public static final String SORT_METHOD_FILE = "file";
         public static final String SORT_METHOD_PATH = "path";
         public static final String SORT_METHOD_DRIVETYPE = "drivetype";
-        public static final String SORT_METHOD_TYPE = "title";
+        public static final String SORT_METHOD_TITLE = "title";
         public static final String SORT_METHOD_TRACK = "track";
         public static final String SORT_METHOD_TIME = "time";
         public static final String SORT_METHOD_ARTIST = "artist";
