@@ -647,6 +647,63 @@ public class MediaFileListFragment extends AbstractListFragment {
         return p;
     }
 
+    public static String getMediaTypeFromPath(final String path) {
+        String p = path.toLowerCase();
+        String[] musicextensions = {".aiff", ".ape", ".au", ".flac", ".m4a", ".m4b", ".mp3", ".mpc", ".ogg", ".opus", ".wav", ".wma"};
+        String[] videoextensions = {".asf", ".avi", ".flv", ".mkv", ".mpg", ".mp2", ".mp4", ".mpeg", ".mpe", ".mpv", ".mov", ".ogg", ".ogv", ".vob", ".webm", ".wmv"};
+        String[] pictureextensions = {".bmp", ".img", ".gif", ".jpg", ".jpeg", ".png"};
+        for (int i = 0; i < musicextensions.length; ++i) {
+            if (p.endsWith(musicextensions[i])) {
+                return Files.Media.MUSIC;
+            }
+        }
+        for (int i = 0; i < videoextensions.length; ++i) {
+            if (p.endsWith(videoextensions[i])) {
+                return Files.Media.VIDEO;
+            }
+        }
+        for (int i = 0; i < pictureextensions.length; ++i) {
+            if (p.endsWith(pictureextensions[i])) {
+                return Files.Media.PICTURES;
+            }
+        }
+        return Files.Media.FILES;
+    }
+
+    public static boolean fileExtensionMatchesMediaType(final String path, final String argMediaType) {
+        String p = path.toLowerCase();
+        String[] musicextensions = {".aiff", ".ape", ".au", ".flac", ".m4a", ".m4b", ".mp3", ".mpc", ".ogg", ".opus", ".wav", ".wma"};
+        String[] videoextensions = {".asf", ".avi", ".flv", ".mkv", ".mpg", ".mp2", ".mp4", ".mpeg", ".mpe", ".mpv", ".mov", ".ogg", ".ogv", ".vob", ".webm", ".wmv"};
+        String[] pictureextensions = {".bmp", ".img", ".gif", ".jpg", ".jpeg", ".png"};
+
+        switch (argMediaType){
+            case Files.Media.MUSIC:
+                for (int i = 0; i < musicextensions.length; ++i) {
+                    if (p.endsWith(musicextensions[i])) {
+                        return true;
+                    }
+                }
+                break;
+            case Files.Media.VIDEO:
+                for (int i = 0; i < videoextensions.length; ++i) {
+                    if (p.endsWith(videoextensions[i])) {
+                        return true;
+                    }
+                }
+                break;
+            case Files.Media.PICTURES:
+                for (int i = 0; i < pictureextensions.length; ++i) {
+                    if (p.endsWith(pictureextensions[i])) {
+                        return true;
+                    }
+                }
+                break;
+            default:
+                return false;
+        }
+        return false;
+    }
+
     @Override
     public void onRefresh() {
 
@@ -688,7 +745,7 @@ public class MediaFileListFragment extends AbstractListFragment {
                                         mediaQueueFileLocation.add(loc);
                                         for (int i = position + 1; i < fileLocationItems.size(); i++) {
                                             fl = fileLocationItems.get(i);
-                                            if (!fl.isDirectory) {
+                                            if (!fl.isDirectory && fileExtensionMatchesMediaType(fl.file, mediaType)) {
                                                 mediaQueueFileLocation.add(fl);
                                             }
                                         }
