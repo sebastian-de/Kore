@@ -463,6 +463,9 @@ public class MediaFileListFragment extends AbstractListFragment {
                 case Settings.SORT_BY_DATE_ADDED:
                     sortOrder = ListType.Sort.SORT_METHOD_DATEADDED;
                     break;
+                default:
+                    sortOrder = ListType.Sort.SORT_METHOD_PATH;
+                    break;
             }
         }
 
@@ -741,9 +744,7 @@ public class MediaFileListFragment extends AbstractListFragment {
                                     case R.id.action_play_from_this_item:
                                         mediaQueueFileLocation.clear();
                                         FileLocation fl;
-                                        // start playing the selected one, then queue the rest
-                                        mediaQueueFileLocation.add(loc);
-                                        for (int i = position + 1; i < fileLocationItems.size(); i++) {
+                                        for (int i = position; i < fileLocationItems.size(); i++) {
                                             fl = fileLocationItems.get(i);
                                             if (!fl.isDirectory && fileExtensionMatchesMediaType(fl.file, mediaType)) {
                                                 mediaQueueFileLocation.add(fl);
